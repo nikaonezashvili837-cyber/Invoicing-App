@@ -1,8 +1,9 @@
+using System;
 namespace InvoicingApp
 {
     public partial class Program
     {
-        public static void ManageCustomers()
+        public static async Task ManageCustomers()
         {
             bool customerMenu = true;
 
@@ -23,7 +24,13 @@ namespace InvoicingApp
                 switch (choice)
                 {
                     case "1":
-                        Console.WriteLine("Add Customer selected.");
+                        Guid uniqueId = Guid.NewGuid();
+                        string idString = uniqueId.ToString();
+                        Console.Write("Enter name: ");
+                        string? userName = Console.ReadLine();
+                        Console.Write("Enter email: ");
+                        string? userEmail = Console.ReadLine();
+                        await AddCustomers(idString,userName,userEmail);
                         break;
 
                     case "2":

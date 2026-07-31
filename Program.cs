@@ -4,10 +4,10 @@ namespace InvoicingApp
 {
     partial class Program
     {
-        public static void Main()
+        public static async Task Main()
         {
             bool isRunning = true;
-
+            await CreateDatabase();
             while (isRunning)
             {
                 Console.Clear();
@@ -27,7 +27,7 @@ namespace InvoicingApp
                 switch (choice)
                 {
                     case "1":
-                        ManageCustomers();
+                        await ManageCustomers();
                         break;
 
                     case "2":
