@@ -42,6 +42,8 @@ namespace InvoicingApp
                         break;
 
                     case "4":
+                        await ListCustomers();
+                        
                         Console.WriteLine("List Customers selected.");
                         break;
 
