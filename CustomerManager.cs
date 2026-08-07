@@ -4,9 +4,8 @@ namespace InvoicingApp
 {
     class CustomerManager()
     {
-        public static async Task<List<Customer>> ListCustomers()
+        public static async Task<List<Customer>> RetriveCustomers()
         {
-
             var sql = "SELECT id,name,email FROM customers";
             List<Customer> customers = new List<Customer>();
             string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
@@ -28,11 +27,16 @@ namespace InvoicingApp
             {
                 Console.WriteLine(ex.Message);
             }
+            return customers;
+        }
+
+        public static async Task ListCustomers()
+        {
+            List<Customer> customers = await RetriveCustomers();
             foreach (Customer c in customers)
             {
                 Console.WriteLine($"{c.Id}\t{c.Name}\t{c.Email}");
             }
-            return customers;
         }
         public static async Task AddCustomers(string id, string? name, string? email)
         {
@@ -73,7 +77,7 @@ namespace InvoicingApp
                 }
                 await cmd.ExecuteNonQueryAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("failed" + ex.Message);
             }
