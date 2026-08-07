@@ -35,6 +35,15 @@ namespace InvoicingApp
                     case "2":
                         Console.Write("Enter id: ");
                         string? id = Console.ReadLine();
+                        try
+                        {
+                            await CustomerManager.CheckUserExistence(id);
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            return;
+                        }
                         Console.WriteLine("Enter the new name");
                         string ? name = Console.ReadLine();
                         Console.WriteLine("Enter the new email");

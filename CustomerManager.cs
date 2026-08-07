@@ -82,5 +82,14 @@ namespace InvoicingApp
                 Console.WriteLine("failed" + ex.Message);
             }
         }
+        public static async Task CheckUserExistence(string? id)
+        {
+            List<Customer> customers =  await RetriveCustomers();
+            bool customerExits = customers.Exists(el => el.Id == id);
+            if(customerExits == false)
+            {
+                throw new Exception("Customer with such id Does not exist");
+            };
+        }
     }
 }
