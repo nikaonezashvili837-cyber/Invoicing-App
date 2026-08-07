@@ -4,9 +4,11 @@ namespace InvoicingApp
 {
     class CustomerManager()
     {
-        public static async Task ListCustomers()
+        public static async Task<List<Customer>> ListCustomers()
         {
+
             var sql = "SELECT id,name,email FROM customers";
+            List<Customer> customers = new List<Customer>();
             string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
             try
             {
@@ -18,13 +20,19 @@ namespace InvoicingApp
                     var id = reader.GetString(0);
                     var name = reader.GetString(1);
                     var email = reader.GetString(2);
-                    Console.WriteLine($"{id}\t{name}\t{email}");
+                    Customer customer = new Customer(id, name, email);
+                    customers.Add(customer);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+            foreach (Customer c in customers)
+            {
+                Console.WriteLine($"{c.Id}\t{c.Name}\t{c.Email}");
+            }
+            return customers;
         }
         public static async Task AddCustomers(string id, string? name, string? email)
         {
@@ -40,6 +48,35 @@ namespace InvoicingApp
             cmd.Parameters.AddWithValue("email", email ?? "");
             await cmd.ExecuteNonQueryAsync();
             Console.WriteLine("Hurray");
+        }
+        public static async Task EditCustomers(Customer c)
+        {
+            try
+            {
+                var (id, name, email) = c;
+                string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
+                var sql = @"
+            UPDATE customers
+            SET 
+              name = COALESCE(NULLIF(@name, ''), name),
+              email = COALESCE(NULLIF(@email, ''), email)
+            WHERE id = @id;
+           ";
+                await using var conn = new NpgsqlConnection(connectionString);
+                await conn.OpenAsync();
+                await using var cmd = new NpgsqlCommand(sql, conn);
+                if (name != null && email != null && id != null)
+                {
+                    cmd.Parameters.AddWithValue("@name", name);
+                    cmd.Parameters.AddWithValue("@email", email);
+                    cmd.Parameters.AddWithValue("@id", id);
+                }
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("failed" + ex.Message);
+            }
         }
     }
 }

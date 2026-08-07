@@ -6,7 +6,7 @@ namespace InvoicingApp
         public static async Task ManageCustomers()
         {
             bool customerMenu = true;
-
+            CustomerManager CustomerManager = new CustomerManager();
             while (customerMenu)
             {
                 Console.Clear();
@@ -20,7 +20,6 @@ namespace InvoicingApp
                 Console.Write("Choose an option: ");
 
                 string? choice = Console.ReadLine();
-
                 switch (choice)
                 {
                     case "1":
@@ -30,10 +29,18 @@ namespace InvoicingApp
                         string? userName = Console.ReadLine();
                         Console.Write("Enter email: ");
                         string? userEmail = Console.ReadLine();
-                        await AddCustomers(idString,userName,userEmail);
+                        await CustomerManager.AddCustomers(idString,userName,userEmail);
                         break;
 
                     case "2":
+                        Console.Write("Enter id: ");
+                        string? id = Console.ReadLine();
+                        Console.WriteLine("Enter the new name");
+                        string ? name = Console.ReadLine();
+                        Console.WriteLine("Enter the new email");
+                        string? email = Console.ReadLine();
+                        Customer c = new Customer(id,name,email);
+                        await CustomerManager.EditCustomers(c);
                         Console.WriteLine("Edit Customer selected.");
                         break;
 
@@ -42,8 +49,7 @@ namespace InvoicingApp
                         break;
 
                     case "4":
-                        await ListCustomers();
-                        
+                        await CustomerManager.ListCustomers();
                         Console.WriteLine("List Customers selected.");
                         break;
 
