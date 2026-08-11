@@ -1,4 +1,5 @@
 using System.Data.SqlTypes;
+using System.Runtime.InteropServices;
 using Npgsql;
 namespace InvoicingApp
 {
@@ -40,18 +41,24 @@ namespace InvoicingApp
         }
         public static async Task AddCustomers(string id, string? name, string? email)
         {
-            string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
-            string sql = @"
+            try
+            {
+                string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
+                string sql = @"
             INSERT INTO customers (id, name, email)
             VALUES (@id, @name, @email)";
-            await using var conn = new NpgsqlConnection(connectionString);
-            await conn.OpenAsync();
-            await using var cmd = new NpgsqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("id", id);
-            cmd.Parameters.AddWithValue("name", name ?? "");
-            cmd.Parameters.AddWithValue("email", email ?? "");
-            await cmd.ExecuteNonQueryAsync();
-            Console.WriteLine("Hurray");
+                await using var dataSource = NpgsqlDataSource.Create(connectionString);
+                await using var cmd = dataSource.CreateCommand(sql);
+                cmd.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text).Value = id;
+                cmd.Parameters.AddWithValue("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
+                cmd.Parameters.AddWithValue("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
+                await cmd.ExecuteNonQueryAsync();
+                Console.WriteLine("Hurray");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         public static async Task EditCustomers(Customer c)
         {
@@ -66,15 +73,11 @@ namespace InvoicingApp
               email = COALESCE(NULLIF(@email, ''), email)
             WHERE id = @id;
            ";
-                await using var conn = new NpgsqlConnection(connectionString);
-                await conn.OpenAsync();
-                await using var cmd = new NpgsqlCommand(sql, conn);
-                if (name != null && email != null && id != null)
-                {
-                    cmd.Parameters.AddWithValue("@name", name);
-                    cmd.Parameters.AddWithValue("@email", email);
-                    cmd.Parameters.AddWithValue("@id", id);
-                }
+                await using var dataSource = NpgsqlDataSource.Create(connectionString);
+                await using var cmd = dataSource.CreateCommand(sql);
+                cmd.Parameters.AddWithValue("id",NpgsqlTypes.NpgsqlDbType.Text).Value = id;
+                cmd.Parameters.AddWithValue("name",NpgsqlTypes.NpgsqlDbType.Text).Value = name;
+                cmd.Parameters.AddWithValue("email",NpgsqlTypes.NpgsqlDbType.Text).Value = email;
                 await cmd.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
@@ -102,7 +105,7 @@ namespace InvoicingApp
                 cmd.Parameters.AddWithValue("id", id);
                 await cmd.ExecuteNonQueryAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
