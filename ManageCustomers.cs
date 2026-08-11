@@ -29,7 +29,7 @@ namespace InvoicingApp
                         string? userName = Console.ReadLine();
                         Console.Write("Enter email: ");
                         string? userEmail = Console.ReadLine();
-                        await CustomerManager.AddCustomers(idString,userName,userEmail);
+                        await CustomerManager.AddCustomers(idString, userName, userEmail);
                         break;
 
                     case "2":
@@ -39,21 +39,25 @@ namespace InvoicingApp
                         {
                             await CustomerManager.CheckUserExistence(id);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Console.WriteLine(ex.Message);
                             return;
                         }
                         Console.WriteLine("Enter the new name");
-                        string ? name = Console.ReadLine();
+                        string? name = Console.ReadLine();
                         Console.WriteLine("Enter the new email");
                         string? email = Console.ReadLine();
-                        Customer c = new Customer(id,name,email);
+                        Customer c = new Customer(id, name, email);
                         await CustomerManager.EditCustomers(c);
                         Console.WriteLine("Edit Customer selected.");
                         break;
 
                     case "3":
+                        Console.Write("Enter id: ");
+                        id = Console.ReadLine();
+                        List<Customer> customers = await CustomerManager.RetriveCustomers();
+                        await CustomerManager.DeleteCustomers(customers.Find(el => el.Id == id));
                         Console.WriteLine("Delete Customer selected.");
                         break;
 

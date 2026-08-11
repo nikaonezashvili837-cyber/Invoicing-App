@@ -82,14 +82,40 @@ namespace InvoicingApp
                 Console.WriteLine("failed" + ex.Message);
             }
         }
+        public static async Task DeleteCustomers(Customer? c)
+        {
+            try
+            {
+                if (c == null)
+                {
+                    Console.WriteLine("no such customer exists");
+                    return;
+                }
+                string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
+                var id = c?.Id;
+                var sql = @"
+              DELETE FROM customers
+              WHERE id = @id
+            ";
+                await using var dataSource = NpgsqlDataSource.Create(connectionString);
+                await using var cmd = dataSource.CreateCommand(sql);
+                cmd.Parameters.AddWithValue("id", id);
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
         public static async Task CheckUserExistence(string? id)
         {
-            List<Customer> customers =  await RetriveCustomers();
+            List<Customer> customers = await RetriveCustomers();
             bool customerExits = customers.Exists(el => el.Id == id);
-            if(customerExits == false)
+            if (customerExits == false)
             {
                 throw new Exception("Customer with such id Does not exist");
-            };
+            }
+            ;
         }
     }
 }
