@@ -3,25 +3,34 @@ using System.Runtime.InteropServices;
 using Npgsql;
 namespace InvoicingApp
 {
-    class CustomerManager()
+    class CustomerManager
     {
+        private static NpgsqlDataSource? dataSource;
+        public CustomerManager()
+        {
+            string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
+            dataSource = NpgsqlDataSource.Create(connectionString);
+        }
+        // private readonly static string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
         public static async Task<List<Customer>> RetriveCustomers()
         {
             var sql = "SELECT id,name,email FROM customers";
             List<Customer> customers = new List<Customer>();
-            string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
+
             try
             {
-                await using var dataSource = NpgsqlDataSource.Create(connectionString);
-                await using var cmd = dataSource.CreateCommand(sql);
-                using var reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                await using var cmd = dataSource?.CreateCommand(sql);
+                if (cmd != null)
                 {
-                    var id = reader.GetString(0);
-                    var name = reader.GetString(1);
-                    var email = reader.GetString(2);
-                    Customer customer = new Customer(id, name, email);
-                    customers.Add(customer);
+                    using var reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        var id = reader.GetString(0);
+                        var name = reader.GetString(1);
+                        var email = reader.GetString(2);
+                        Customer customer = new Customer(id, name, email);
+                        customers.Add(customer);
+                    }
                 }
             }
             catch (Exception ex)
@@ -47,12 +56,15 @@ namespace InvoicingApp
                 string sql = @"
             INSERT INTO customers (id, name, email)
             VALUES (@id, @name, @email)";
-                await using var dataSource = NpgsqlDataSource.Create(connectionString);
-                await using var cmd = dataSource.CreateCommand(sql);
-                cmd.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text).Value = id;
-                cmd.Parameters.AddWithValue("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-                cmd.Parameters.AddWithValue("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
-                await cmd.ExecuteNonQueryAsync();
+                // await using var dataSource = NpgsqlDataSource.Create(connectionString);
+                await using var cmd = dataSource?.CreateCommand(sql);
+                cmd?.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text).Value = id;
+                cmd?.Parameters.AddWithValue("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
+                cmd?.Parameters.AddWithValue("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
+                if (cmd != null)
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                }
                 Console.WriteLine("Hurray");
             }
             catch (Exception ex)
@@ -73,12 +85,14 @@ namespace InvoicingApp
               email = COALESCE(NULLIF(@email, ''), email)
             WHERE id = @id;
            ";
-                await using var dataSource = NpgsqlDataSource.Create(connectionString);
-                await using var cmd = dataSource.CreateCommand(sql);
-                cmd.Parameters.AddWithValue("id",NpgsqlTypes.NpgsqlDbType.Text).Value = id;
-                cmd.Parameters.AddWithValue("name",NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-                cmd.Parameters.AddWithValue("email",NpgsqlTypes.NpgsqlDbType.Text).Value = email;
-                await cmd.ExecuteNonQueryAsync();
+                await using var cmd = dataSource?.CreateCommand(sql);
+                cmd?.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text).Value = id;
+                cmd?.Parameters.AddWithValue("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
+                cmd?.Parameters.AddWithValue("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
+                if(cmd != null)
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -102,7 +116,10 @@ namespace InvoicingApp
             ";
                 await using var dataSource = NpgsqlDataSource.Create(connectionString);
                 await using var cmd = dataSource.CreateCommand(sql);
-                cmd.Parameters.AddWithValue("id", id);
+                if(id != null)
+                {
+                    cmd.Parameters.AddWithValue("id", id);
+                }
                 await cmd.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
