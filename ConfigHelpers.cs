@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Configuration;
 namespace InvoicingApp
 {
-    public partial class Program
-    {
         public static class ConfigurationHelper
         {
             private static readonly IConfiguration _configuration;
@@ -27,4 +25,3 @@ namespace InvoicingApp
             }
         }
     }
-}
