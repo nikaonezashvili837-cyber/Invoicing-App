@@ -19,7 +19,14 @@ namespace InvoicingApp
             id TEXT NOT NULL,
             name TEXT NOT NULL,
             email TEXT NOT NULL
-            )";
+            );
+            CREATE TABLE IF NOT EXISTS products
+            (
+            id TEXT NOT NULL,
+            productName TEXT NOT NULL,
+            price DECIMAL NOT NULL
+            );
+            ";
                 await using var cmd = new NpgsqlCommand(sql, conn);
                 await cmd.ExecuteNonQueryAsync();
             }
