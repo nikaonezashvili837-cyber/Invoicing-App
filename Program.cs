@@ -31,6 +31,7 @@ namespace InvoicingApp
                         break;
 
                     case "2":
+                        ManageProducts();
                         Console.WriteLine("Manage Products selected.");
                         break;
 
