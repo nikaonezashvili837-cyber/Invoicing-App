@@ -24,6 +24,7 @@ namespace InvoicingApp
             (
             id TEXT NOT NULL,
             productName TEXT NOT NULL,
+            category TEXT NOT NULL,
             price DECIMAL NOT NULL
             );
             ";
