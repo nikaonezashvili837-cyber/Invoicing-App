@@ -3,15 +3,12 @@ using System.Runtime.InteropServices;
 using Npgsql;
 namespace InvoicingApp
 {
-    class CustomerManager
+    class CustomerManager:CrudManager
     {
-        private static NpgsqlDataSource? dataSource;
-        public CustomerManager()
+        public CustomerManager():base()
         {
-            string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
-            dataSource = NpgsqlDataSource.Create(connectionString);
+            
         }
-        // private readonly static string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
         public static async Task<List<Customer>> RetriveCustomers()
         {
             var sql = "SELECT id,name,email FROM customers";
