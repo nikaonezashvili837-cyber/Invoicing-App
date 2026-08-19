@@ -1,13 +1,12 @@
 using System.Runtime.InteropServices;
-
 namespace InvoicingApp
 {
     public partial class Program
     {
-        public static void ManageProducts()
+        public static async Task ManageProducts()
         {
             bool productMenu = true;
-            // ProductManager productManager = new ProductManager();
+            ProductManager productManager = new ProductManager();
 
             while (productMenu)
             {
@@ -26,7 +25,15 @@ namespace InvoicingApp
                 switch (choice)
                 {
                     case "1":
-                        // Add Product
+                        Console.Write("Enter product name: ");
+                        string productName = Console.ReadLine()!;
+
+                        Console.Write("Enter product price: ");
+                        decimal price = decimal.Parse(Console.ReadLine()!);
+                        Guid guid = Guid.NewGuid();
+                        string Id = guid.ToString();
+                        Product product = new Product(Id,productName,price);
+                        await productManager.AddProducts(product);
                         break;
 
                     case "2":
