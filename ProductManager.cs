@@ -25,11 +25,32 @@ namespace InvoicingApp
                     await cmd.ExecuteNonQueryAsync();
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        public async Task RetriveProducts()
+        {
+            try
+            {
+                string sql = "SELECT productName , price FROM products";
+                await using var cmd = dataSource?.CreateCommand(sql);
+                if (cmd != null)
+                {
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    Console.WriteLine("retrived");
+                    while(await reader.ReadAsync())
+                    {
+                        Console.WriteLine(reader.GetString(0));
+                        Console.WriteLine(reader.GetDecimal(1));
+                    }
+                }
+            }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
         }
-        
     }
 }

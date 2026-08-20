@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Security.Authentication;
 namespace InvoicingApp
 {
     public partial class Program
@@ -19,11 +20,10 @@ namespace InvoicingApp
                 Console.WriteLine("4. List Products");
                 Console.WriteLine("5. Back to Main Menu");
                 Console.Write("Choose an option: ");
-
                 string? choice = Console.ReadLine();
-
                 switch (choice)
                 {
+
                     case "1":
                         Console.Write("Enter product name: ");
                         string productName = Console.ReadLine()!;
@@ -32,7 +32,7 @@ namespace InvoicingApp
                         decimal price = decimal.Parse(Console.ReadLine()!);
                         Guid guid = Guid.NewGuid();
                         string Id = guid.ToString();
-                        Product product = new Product(Id,productName,price);
+                        Product product = new Product(Id, productName, price);
                         await productManager.AddProducts(product);
                         break;
 
@@ -45,6 +45,8 @@ namespace InvoicingApp
                         break;
 
                     case "4":
+                        await productManager.RetriveProducts();
+
                         // List Products
                         break;
 
@@ -56,7 +58,14 @@ namespace InvoicingApp
                         Console.WriteLine("Invalid option.");
                         break;
                 }
+                if (productMenu)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                }
             }
+
         }
     }
 }
