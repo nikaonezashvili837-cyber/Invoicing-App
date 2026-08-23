@@ -34,20 +34,22 @@ namespace InvoicingApp
         {
             try
             {
-                string sql = "SELECT productName , price FROM products";
+                string sql = "SELECT * FROM products";
                 await using var cmd = dataSource?.CreateCommand(sql);
                 if (cmd != null)
                 {
                     await using var reader = await cmd.ExecuteReaderAsync();
                     Console.WriteLine("retrived");
-                    while(await reader.ReadAsync())
+                    while (await reader.ReadAsync())
                     {
-                        Console.WriteLine(reader.GetString(0));
-                        Console.WriteLine(reader.GetDecimal(1));
+                        Console.WriteLine($"Id: {reader.GetString(0)}");
+                        Console.WriteLine($"Name: {reader.GetString(1)}");
+                        Console.WriteLine($"Price: {reader.GetDecimal(2):C}");
+                        Console.WriteLine("--------------------");
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
