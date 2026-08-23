@@ -54,5 +54,31 @@ namespace InvoicingApp
                 Console.WriteLine(ex.Message);
             }
         }
+        public async Task EditTask(Product product)
+        {
+            try
+            {
+                var (id, productName, Price) = product;
+                string? sql = @"
+             UPDATE products
+             SET
+               productName = COALESCE(NULLIF(@productName, ''), productName),
+               Price = COALESCE(@Price, Price)
+             WHERE id = @id;
+            ";
+                await using var cmd = dataSource?.CreateCommand(sql);
+                cmd?.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text).Value = id;
+                cmd?.Parameters.AddWithValue("ProductName", NpgsqlTypes.NpgsqlDbType.Text).Value = productName;
+                cmd?.Parameters.AddWithValue("Price", NpgsqlTypes.NpgsqlDbType.Double).Value = Price;
+                if(cmd != null)
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }

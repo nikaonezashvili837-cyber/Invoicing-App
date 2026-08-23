@@ -37,7 +37,21 @@ namespace InvoicingApp
                         break;
 
                     case "2":
-                        // Edit Product
+                        Console.WriteLine("Enter product id to edit");
+                        string? id = Console.ReadLine();
+                        Console.WriteLine("Enter edited name");
+                        string? name = Console.ReadLine();
+                        Console.WriteLine("Enter edited price");
+                        string? entredPrice = Console.ReadLine();
+                        if(decimal.TryParse(entredPrice, out decimal result))
+                        {
+                            Product editedProduct = new Product(id,name,result);
+                            await productManager.EditTask(editedProduct);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid input. Please enter a valid decimal number.");
+                        }
                         break;
 
                     case "3":

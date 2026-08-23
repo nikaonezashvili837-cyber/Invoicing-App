@@ -6,7 +6,7 @@ namespace InvoicingApp
         public string? ProductName {get;set;}
         public string? Category {get;set;}
         public decimal Price {get;set;}
-        public Product(string Id , string Name ,  decimal Price)
+        public Product(string? Id , string? Name ,  decimal Price)
         {
             this.Id = Id;
             this.ProductName = Name;
