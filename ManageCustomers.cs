@@ -3,6 +3,7 @@ namespace InvoicingApp
 {
     public partial class Program
     {
+        
         public static async Task ManageCustomers()
         {
             bool customerMenu = true;

@@ -1,13 +1,13 @@
 using System.Runtime.InteropServices;
-
+using System.Security.Authentication;
 namespace InvoicingApp
 {
     public partial class Program
     {
-        public static void ManageProducts()
+        public static async Task ManageProducts()
         {
             bool productMenu = true;
-            // ProductManager productManager = new ProductManager();
+            ProductManager productManager = new ProductManager();
 
             while (productMenu)
             {
@@ -20,24 +20,51 @@ namespace InvoicingApp
                 Console.WriteLine("4. List Products");
                 Console.WriteLine("5. Back to Main Menu");
                 Console.Write("Choose an option: ");
-
                 string? choice = Console.ReadLine();
-
                 switch (choice)
                 {
+
                     case "1":
-                        // Add Product
+                        Console.Write("Enter product name: ");
+                        string productName = Console.ReadLine()!;
+
+                        Console.Write("Enter product price: ");
+                        decimal price = decimal.Parse(Console.ReadLine()!);
+                        Guid guid = Guid.NewGuid();
+                        string Id = guid.ToString();
+                        Product product = new Product(Id, productName, price);
+                        await productManager.AddProducts(product);
                         break;
 
                     case "2":
-                        // Edit Product
+                        Console.WriteLine("Enter product id to edit");
+                        string? id = Console.ReadLine();
+                        Console.WriteLine("Enter edited name");
+                        string? name = Console.ReadLine();
+                        Console.WriteLine("Enter edited price");
+                        string? entredPrice = Console.ReadLine();
+                        if(decimal.TryParse(entredPrice, out decimal result))
+                        {
+                            Product editedProduct = new Product(id,name,result);
+                            await productManager.EditTask(editedProduct);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid input. Please enter a valid decimal number.");
+                        }
                         break;
 
                     case "3":
+
+                         Console.WriteLine("Enter productId to delete");
+                         string? productId = Console.ReadLine();
+                         await productManager.DeleteProduct(productId);
                         // Delete Product
                         break;
 
                     case "4":
+                        await productManager.RetriveProducts();
+
                         // List Products
                         break;
 
@@ -49,7 +76,14 @@ namespace InvoicingApp
                         Console.WriteLine("Invalid option.");
                         break;
                 }
+                if (productMenu)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                }
             }
+
         }
     }
 }

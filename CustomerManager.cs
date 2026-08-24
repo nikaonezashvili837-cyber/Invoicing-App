@@ -3,15 +3,8 @@ using System.Runtime.InteropServices;
 using Npgsql;
 namespace InvoicingApp
 {
-    class CustomerManager
+    class CustomerManager : CrudManager
     {
-        private static NpgsqlDataSource? dataSource;
-        public CustomerManager()
-        {
-            string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
-            dataSource = NpgsqlDataSource.Create(connectionString);
-        }
-        // private readonly static string connectionString = ConfigurationHelper.GetConnectionString("DefaultConnection");
         public static async Task<List<Customer>> RetriveCustomers()
         {
             var sql = "SELECT id,name,email FROM customers";
@@ -89,7 +82,7 @@ namespace InvoicingApp
                 cmd?.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text).Value = id;
                 cmd?.Parameters.AddWithValue("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
                 cmd?.Parameters.AddWithValue("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
-                if(cmd != null)
+                if (cmd != null)
                 {
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -116,7 +109,7 @@ namespace InvoicingApp
             ";
                 await using var dataSource = NpgsqlDataSource.Create(connectionString);
                 await using var cmd = dataSource.CreateCommand(sql);
-                if(id != null)
+                if (id != null)
                 {
                     cmd.Parameters.AddWithValue("id", id);
                 }
