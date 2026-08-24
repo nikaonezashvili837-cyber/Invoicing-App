@@ -6,7 +6,6 @@ namespace InvoicingApp
         
         public static async Task ManageCustomers()
         {
-            await CreateDatabase();
             bool customerMenu = true;
             CustomerManager CustomerManager = new CustomerManager();
             while (customerMenu)
