@@ -70,7 +70,7 @@ namespace InvoicingApp
                 cmd?.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text).Value = id;
                 cmd?.Parameters.AddWithValue("ProductName", NpgsqlTypes.NpgsqlDbType.Text).Value = productName;
                 cmd?.Parameters.AddWithValue("Price", NpgsqlTypes.NpgsqlDbType.Double).Value = Price;
-                if(cmd != null)
+                if (cmd != null)
                 {
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -80,5 +80,26 @@ namespace InvoicingApp
                 Console.WriteLine(ex.Message);
             }
         }
+        public async Task DeleteProduct(String? id)
+        {
+            try
+            {
+                string sql = @"
+                   DELETE FROM products
+                   WHERE id = @id
+                ";
+                await using var cmd = dataSource?.CreateCommand(sql);
+                cmd?.Parameters.AddWithValue("id",NpgsqlTypes.NpgsqlDbType.Text).Value = id;
+                if (cmd != null)
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
     }
 }

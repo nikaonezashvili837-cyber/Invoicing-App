@@ -55,6 +55,10 @@ namespace InvoicingApp
                         break;
 
                     case "3":
+
+                         Console.WriteLine("Enter productId to delete");
+                         string? productId = Console.ReadLine();
+                         await productManager.DeleteProduct(productId);
                         // Delete Product
                         break;
 
