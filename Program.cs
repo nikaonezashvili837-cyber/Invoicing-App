@@ -36,6 +36,7 @@ namespace InvoicingApp
                         break;
 
                     case "3":
+                        await InvoiceGenerator();
                         Console.WriteLine("Create Invoice selected.");
                         break;
 
