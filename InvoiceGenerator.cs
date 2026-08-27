@@ -2,14 +2,12 @@ namespace InvoicingApp
 {
     public partial class Program
     {
-        public static void InvoiceGenerator()
+        public async static Task InvoiceGenerator()
         {
             Console.WriteLine("--- Create Invoice ---");
 
             Console.Write("Customer Id: ");
             string customerId = Console.ReadLine()!;
-
-
 
             while (true)
             {
