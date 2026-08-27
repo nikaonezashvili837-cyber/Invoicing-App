@@ -30,8 +30,9 @@ namespace InvoicingApp
                 Console.WriteLine(ex.Message);
             }
         }
-        public async Task RetriveProducts()
+        public async Task<List<Product>> RetriveProducts()
         {
+            List<Product> products = new List<Product>();
             try
             {
                 string sql = "SELECT * FROM products";
@@ -42,16 +43,29 @@ namespace InvoicingApp
                     Console.WriteLine("retrived");
                     while (await reader.ReadAsync())
                     {
-                        Console.WriteLine($"Id: {reader.GetString(0)}");
-                        Console.WriteLine($"Name: {reader.GetString(1)}");
-                        Console.WriteLine($"Price: {reader.GetDecimal(2):C}");
-                        Console.WriteLine("--------------------");
+                        string Id = reader.GetString(0);
+                        string Name = reader.GetString(1);
+                        decimal Price = reader.GetDecimal(2);
+                        Product product = new Product(Id, Name, Price);
+                        products.Add(product);
                     }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+            return products;
+        }
+        public async void ListProducts()
+        {
+            List<Product> products = await RetriveProducts();
+            foreach (Product product in products)
+            {
+                Console.WriteLine($"Id: {product.Id}");
+                Console.WriteLine($"Name: {product.ProductName}");
+                Console.WriteLine($"Price: {product.Price}");
+                Console.WriteLine("--------------------");
             }
         }
         public async Task EditTask(Product product)
@@ -89,7 +103,7 @@ namespace InvoicingApp
                    WHERE id = @id
                 ";
                 await using var cmd = dataSource?.CreateCommand(sql);
-                cmd?.Parameters.AddWithValue("id",NpgsqlTypes.NpgsqlDbType.Text).Value = id;
+                cmd?.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text).Value = id;
                 if (cmd != null)
                 {
                     await cmd.ExecuteNonQueryAsync();
