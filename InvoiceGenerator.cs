@@ -2,24 +2,33 @@ namespace InvoicingApp
 {
     public partial class Program
     {
+
         public async static Task InvoiceGenerator()
         {
-            Console.WriteLine("--- Create Invoice ---");
 
+
+            Console.WriteLine("--- Create Invoice ---");
+            CustomerManager customerManager = new CustomerManager();
+            ProductManager productManager = new ProductManager();
             Console.Write("Customer Id: ");
             string customerId = Console.ReadLine()!;
-
+            List<Customer> customers = await CustomerManager.RetriveCustomers();
+            List<Product> products = await productManager.RetriveProducts();
+            Customer? customer = customers.Find(customer => customer.Id == customerId);
+            Invoice invoice = new Invoice();
             while (true)
             {
                 Console.WriteLine();
                 Console.WriteLine("--- Add Line Item ---");
 
                 Console.Write("Item id: ");
-                string itemId = Console.ReadLine()!;
+                string productId = Console.ReadLine()!;
+                Product? product = products.Find(product => product.Id == productId);
 
                 Console.Write("Quantity: ");
                 int quantity = int.Parse(Console.ReadLine()!);
-
+                SelectedProductData selectedProduct = new SelectedProductData(product, quantity);
+                invoice.AddProduct(selectedProduct);
                 Console.Write("Add another item? (Y/N): ");
                 string? answer = Console.ReadLine();
 
@@ -28,6 +37,7 @@ namespace InvoicingApp
                     break;
                 }
             }
+
 
             Console.WriteLine();
 
@@ -42,7 +52,30 @@ namespace InvoicingApp
 
             Console.WriteLine();
             Console.WriteLine("--- Invoice Data Collected ---");
-
+            List<SelectedProductData> selectedProducts = invoice.RetriveProducts();
+            string lineItems = "";
+            foreach (SelectedProductData selectedProduct in selectedProducts)
+            {
+                string? name = selectedProduct.ProductName;
+                int amount = selectedProduct.Amount;
+                decimal price = selectedProduct.SelectedProduct.Price;
+                string lineItem = $" {name} - X{amount} @ ${price} = ${price * amount}\n";
+                lineItems += lineItem;
+            }
+            Console.WriteLine($@"
+            --- Invoice Summary ---
+            Customer:      {customer?.Name}  
+            Line items:
+            ${lineItems}
+            Subtotal:                            $135.00
+            Discount (10%):                      -$13.50
+            Taxable amount:                      $121.50
+            Tax (VAT 15%):                       +$18.23
+           -----------------------------------------------
+           Total:                                $139.73
+           Due date:                             2026-09-27
+           Status:                               Draft
+           ");
         }
     }
 }
