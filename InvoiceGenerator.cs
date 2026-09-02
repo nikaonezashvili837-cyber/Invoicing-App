@@ -65,19 +65,22 @@ namespace InvoicingApp
                     lineItems += lineItem;
                     subtotal += total;
                 }
-                IVatCaclulator vatCaclulator;
+                ICaclulator vatCaclulator;
                 vatCaclulator = vatType == 1
                 ? new StandardVatCalculator()
                 : new ZeroRatedVatCalculator();
+                ICaclulator discountCalculator = new DiscountCalculator(discountPercent);
+                decimal DiscountAmount = discountCalculator.Calculate(subtotal);
+                decimal TaxableAmount = subtotal - DiscountAmount;
                 Console.WriteLine($@"
             --- Invoice Summary ---
             Customer:      {customer?.Name}  
             Line items:
             ${lineItems}
             Subtotal:                            {subtotal}$
-            Discount (10%):                      -$13.50
-            Taxable amount:                      $121.50
-            Tax (VAT):                       +${vatCaclulator.CalculateVat(subtotal)}
+            Discount (${discountPercent}%):       -${DiscountAmount}
+            Taxable amount:                      ${TaxableAmount}
+            Tax (VAT):                       +${vatCaclulator.Calculate(TaxableAmount)}
            -----------------------------------------------
            Total:                                $139.73
            Due date:                             2026-09-27
